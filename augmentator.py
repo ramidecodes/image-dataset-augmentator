@@ -45,15 +45,16 @@ p = Augmentor.Pipeline(source_directory=a.input_dir, output_directory=a.output_d
 # p.flip_left_right(probability=1)
 # p.flip_top_bottom(probability=1)
 
+p.crop_by_size(probability=1, width=a.output_width, height=a.output_height, centre=False)
+
 if a.zoom:
-    p.zoom_random(probability=0.8, percentage_area=0.8, randomise_percentage_area=False)
-    # p.zoom(probability=0.5, min_factor=1.1, max_factor=1.5)
+    p.zoom_random(probability=1, percentage_area=0.7, randomise_percentage_area=False)
+    # p.zoom(probability=1, min_factor=1.1, max_factor=1.5)
 
 if a.distortion:
-    p.random_distortion(probability=0.8, grid_width=10, grid_height=10, magnitude=6)
+    p.random_distortion(probability=1, grid_width=10, grid_height=10, magnitude=12)
 
 # p.resize(probability=1, width=a.output_width, height=a.output_height, resample_filter=a.resample_filter)
-p.crop_by_size(probability=1, width=a.output_width, height=a.output_height)
 
 # Generate new augmented images
 p.status()
