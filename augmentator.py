@@ -9,6 +9,8 @@ Process each image in a directory and outputs a new dataset with the selected tr
 import os, os.path
 import Augmentor
 import argparse
+import pprint
+from utils import calculate_ajusted_width
 
 # Add CLI argument parser
 parser = argparse.ArgumentParser(description="Process each image in a directory and outputs a new dataset with the transformations.")
@@ -29,13 +31,24 @@ parser.add_argument("--sample_count", default=100, help="amount of new images to
 a = parser.parse_args()
 
 # Get image count
-image_count = len([name for name in os.listdir(a.input_dir) if os.path.isfile(name)])
+# image_count = len([name for name in os.listdir(a.input_dir) if os.path.isfile(name)])
 
 # Create pipeline to resize original images and add them to the newly created augmented images
 resize_pipe = Augmentor.Pipeline(source_directory=a.input_dir, output_directory=a.output_dir, save_format=a.output_format)
-resize_pipe.resize(probability=1, width=a.output_width, height=a.output_height, resample_filter=a.resample_filter)
+
+# Calculate the resized with based on the original size and desired image height output
+adjusted_width = calculate_ajusted_width(a.output_height, resize_pipe.augmentor_images[0].image_path)
+# Resize to desired Heigh preserving original aspect ratio
+resize_pipe.resize(probability=1, width=adjusted_width, height=a.output_height, resample_filter=a.resample_filter)
+
+# Crop to the desired with and hight from the center
+resize_pipe.crop_by_size(probability=1, width=a.output_width, height=a.output_height, centre=False)
+
+# Print changes and status
 resize_pipe.status()
-resize_pipe.sample(image_count)
+
+# Generate the exact amount of original images resized to the given withd and size
+resize_pipe.sample(len(resize_pipe.augmentor_images))
 
 # Create pipeline to generate the modifided images
 augment_pipe = Augmentor.Pipeline(source_directory=a.input_dir, output_directory=a.output_dir, save_format=a.output_format)
@@ -48,16 +61,16 @@ augment_pipe = Augmentor.Pipeline(source_directory=a.input_dir, output_directory
 # augment_pipe.flip_left_right(probability=1)
 # augment_pipe.flip_top_bottom(probability=1)
 
-# p.crop_by_size(probability=1, width=a.output_width, height=a.output_height, centre=False)
 
 if a.zoom:
-    augment_pipe.zoom_random(probability=1, percentage_area=0.8, randomise_percentage_area=False)
+    augment_pipe.zoom_random(probability=1, percentage_area=0.7, randomise_percentage_area=True)
     # augment_pipe.zoom(probability=1, min_factor=1.1, max_factor=1.5)
 
 if a.distortion:
     augment_pipe.random_distortion(probability=1, grid_width=10, grid_height=10, magnitude=12)
 
-augment_pipe.resize(probability=1, width=a.output_width, height=a.output_height, resample_filter=a.resample_filter)
+augment_pipe.resize(probability=1, width=adjusted_width, height=a.output_height, resample_filter=a.resample_filter)
+augment_pipe.crop_by_size(probability=1, width=a.output_width, height=a.output_height, centre=False)
 
 # Generate new augmented images
 augment_pipe.status()
