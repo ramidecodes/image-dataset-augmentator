@@ -58,4 +58,4 @@ if a.distortion:
 
 # Generate new augmented images
 p.status()
-p.sample(a.sample_count)
+p.sample(int(a.sample_count))
