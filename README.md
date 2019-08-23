@@ -14,11 +14,7 @@ Image augmentation pipepline for conditional GANs base on Augmentator library
 
 ## Basic execution
 ```bash
-python3 augmentator.py
---input_dir '/home/ramiro/SoftwareProjects/datasets/databetes/gummybears_macro' 
---output_dir '/home/ramiro/SoftwareProjects/datasets/databetes/gummybears_macro/output' 
---sample_count 100 
---zoom --distortion 
+python3 augmentator.py --input_dir 'path/to/your/images' --output_dir 'path/to/your/augmented/images' --zoom --distortion --output_prefix 'relevantprefix' --sample_count 100 
 ```
 
 This will do random crops and resize the images to 512px also add random zoom and distortion.

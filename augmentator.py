@@ -10,7 +10,7 @@ import os, os.path
 import Augmentor
 import argparse
 import pprint
-from utils import calculate_ajusted_width
+from utils import calculate_ajusted_width, rename_files
 
 # Add CLI argument parser
 parser = argparse.ArgumentParser(description="Process each image in a directory and outputs a new dataset with the transformations.")
@@ -23,7 +23,7 @@ parser.add_argument("--resample_filter", default="BICUBIC", choices=["BICUBIC","
 parser.add_argument("--zoom", action="store_true", help="zoom in randomly")
 parser.add_argument("--distortion", action="store_true", help="distort randomly")
 parser.add_argument("--sample_count", default=100, help="amount of new images to generate")
-# parser.add_argument("--output_prefix", default="augmented", help="A prefix to be added to all the images with the format 'prefix_00001")
+parser.add_argument("--output_prefix", default="augmented", help="A prefix to be added to all the images with the format 'prefix_00001")
 
 
 # TODO Add argument to use image pairs as input (to process cGAN datasets)
@@ -63,7 +63,7 @@ augment_pipe = Augmentor.Pipeline(source_directory=a.input_dir, output_directory
 
 
 if a.zoom:
-    augment_pipe.zoom_random(probability=1, percentage_area=0.7, randomise_percentage_area=True)
+    augment_pipe.zoom_random(probability=1, percentage_area=0.6, randomise_percentage_area=False)
     # augment_pipe.zoom(probability=1, min_factor=1.1, max_factor=1.5)
 
 if a.distortion:
@@ -75,3 +75,6 @@ augment_pipe.crop_by_size(probability=1, width=a.output_width, height=a.output_h
 # Generate new augmented images
 augment_pipe.status()
 augment_pipe.sample(int(a.sample_count))
+
+print("Renaming augmented files using the prefix ", a.output_prefix)
+rename_files(a.output_prefix, a.output_dir, a.output_format)
