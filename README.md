@@ -11,6 +11,7 @@ Image augmentation pipepline for conditional GANs base on Augmentator library
 * `--sample_count` amount of new images to generate
 * `--zoom` zoom in randomly
 * `--distortion` distort randomly
+* `--output_prefix` prefix used to lable output images 'prefix_00001.jpeg'
 
 ## Basic execution
 ```bash
