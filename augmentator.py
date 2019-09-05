@@ -78,3 +78,4 @@ augment_pipe.sample(int(a.sample_count))
 
 print("Renaming augmented files using the prefix ", a.output_prefix)
 rename_files(a.output_prefix, a.output_dir, a.output_format)
+print(f"Files were successfully saved in {a.output_dir}")
